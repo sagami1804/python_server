@@ -28,7 +28,7 @@ def handle_client(conn, addr):
             if not data:
                 break
             print(f"{addr} から受信(暗号): {data.decode()}")
-            print(f"{addr} から受信(平文): {decryption(data.decode())}")
+            print(f"{addr} から受信(平文): {str(decryption(int(data.decode())))}\n")
             
             if data.decode() == "exit":
                 break 

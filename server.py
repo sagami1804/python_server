@@ -29,9 +29,6 @@ def handle_client(conn, addr):
                 break
             print(f"{addr} から受信(暗号): {data.decode()}")
             print(f"{addr} から受信(平文): {str(decryption(int(data.decode())))}\n")
-            
-            if data.decode() == "exit":
-                break 
             response = "受信しました: " + data.decode()
             conn.sendall(response.encode())
     print(f"{addr} との接続を終了しました")

@@ -12,7 +12,8 @@ def handle_client(conn, addr):
             data = conn.recv(1024)
             if not data:
                 break
-            print(f"{addr} から受信: {data.decode()}")
+            print(f"{addr} から受信(暗号): {data.decode()}")
+            print(f"{addr} から受信(平文): {decryption(data.decode())}")
             
             if data.decode() == "exit":
                 break 
@@ -20,12 +21,22 @@ def handle_client(conn, addr):
             conn.sendall(response.encode())
     print(f"{addr} との接続を終了しました")
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    print(f"サーバー起動中... ポート {PORT} で待機中")
+def decryption(code):
+    text = ""
+    return text
+    
+    
+def main():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        print(f"サーバー起動中... ポート {PORT} で待機中")
 
-    while True:
-        conn, addr = s.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
+        while True:
+            conn, addr = s.accept()
+            thread = threading.Thread(target=handle_client, args=(conn, addr))
+            thread.start()
+        
+        
+if __name__ == "__main__":
+    main()

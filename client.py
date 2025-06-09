@@ -50,7 +50,7 @@ def main():
             
             # サーバーから受信(デバッグ)
             data = s.recv(1024)
-            print("サーバーからの返信:", data.decode())
+            print("サーバーからの返信:", data.decode(),"\n")
         
         
 if __name__ == "__main__":

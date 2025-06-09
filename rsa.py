@@ -1,4 +1,3 @@
-# pip install pycryptodome
 from Crypto.Util.number import getPrime
 
 charToNumber = {
@@ -118,8 +117,8 @@ def modinv(q, p):
 if __name__ == "__main__":
 
     # 秘密鍵
-    p = getPrime(64)
-    q = getPrime(64)
+    p = getPrime(8)
+    q = getPrime(8)
 
     n = p * q
     phi = (p - 1) * (q - 1)
@@ -131,16 +130,16 @@ if __name__ == "__main__":
     dq = d % (q - 1)
     qinv = modinv(q, p)
     
-    # 平文（数値）
-    m = 1234123412341234
+    # 平文（4桁の数値）
+    m = 9999
+    print("平文：" + str(m))
 
     # 暗号化
     c = encRsaCrt(m, n, e)
 
-    print("c：" + str(c))
-    print("")
+    print("暗号文：" + str(c))
 
     # 復号
     m = decRsaCRT(c, n, p, q, dp, dq, qinv) 
 
-    print("m：" + str(m))
+    print("復号した文：" + str(m))

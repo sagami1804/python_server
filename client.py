@@ -11,8 +11,7 @@ N = P * Q
 E = 65537
 
 def encryption(text):
-    code = ""
-    code = encRsaCrt(int(text),N,E)
+    code = encRsaCrt(text,N,E)
     return code
 
 def main():
@@ -22,12 +21,23 @@ def main():
         print("接続しました。メッセージを送信してください")
         
         while True:
-            msg = input("送信文字列（終了するには空Enter）: ")
-            if msg == "exit" or "":
+            msg = input(f"4桁の数字を-で区切って入力して下さい（終了するには空Enter）: ")
+            msg = msg.split('-')
+            enc_msg = ''
+            count = 0
+            for numbers in msg:
+                if count == 3:
+                    enc_msg = enc_msg + str(encryption(int(numbers)))
+                else:
+                    enc_msg = enc_msg + str(encryption(int(numbers))) + '-'
+                count = count + 1
+
+            print("暗号:"+str(enc_msg))
+            if str(msg) == "":
                 break
-            msg = encryption(int(msg))
-            print("暗号:"+str(msg))
-            s.sendall(str(msg).encode())
+            if str(msg) == "exit":
+                break
+            s.sendall(enc_msg.encode())
             data = s.recv(1024)
             print("サーバーからの返信:", data.decode())
         

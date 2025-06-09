@@ -1,3 +1,4 @@
+from Crypto.Util.number import getPrime
 
 charToNumber = {
     ' ': 0,
@@ -108,16 +109,16 @@ def xgcd(a, b):
 # モジュラ逆数
 def modinv(q, p):
     g, x, y = xgcd(q, p)
-    # if g != 1:
-        
-    # else:
-    return x % p
+    if g != 1:
+        raise Exception('modular inverse does not exist')
+    else:
+        return x % p
 
 if __name__ == "__main__":
 
     # 秘密鍵
-    p = 997
-    q = 859
+    p = getPrime(8)
+    q = getPrime(8)
 
     n = p * q
     phi = (p - 1) * (q - 1)
@@ -129,16 +130,16 @@ if __name__ == "__main__":
     dq = d % (q - 1)
     qinv = modinv(q, p)
     
-    # 平文（数値）
-    m = 12345
+    # 平文（4桁の数値）
+    m = 9999
+    print("平文：" + str(m))
 
     # 暗号化
     c = encRsaCrt(m, n, e)
 
-    print("c：" + str(c))
-    print("")
+    print("暗号文：" + str(c))
 
     # 復号
     m = decRsaCRT(c, n, p, q, dp, dq, qinv) 
 
-    print("m：" + str(m))
+    print("復号した文：" + str(m))

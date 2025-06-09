@@ -27,9 +27,20 @@ def handle_client(conn, addr):
             data = conn.recv(1024)
             if not data:
                 break
-            print(f"{addr} から受信(暗号): {data.decode()}")
-            print(f"{addr} から受信(平文): {str(decryption(int(data.decode())))}\n")
-            response = "受信しました: " + data.decode()
+            data = data.decode()
+            print(f"{addr} から受信(暗号): {data}")
+            data_list = data.split('-')
+            dec_data = ''
+            for i in range(4):
+                if i == 3:
+                    dec_data = dec_data + str(decryption(int(data_list[i])))
+                else:
+                    dec_data = dec_data + str(decryption(int(data_list[i]))) + '-'
+            print(f"{addr} から受信(平文): {dec_data}\n")
+            
+            if data == "exit":
+                break
+            response = "受信しました: " + dec_data
             conn.sendall(response.encode())
     print(f"{addr} との接続を終了しました")
 

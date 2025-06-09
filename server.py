@@ -1,6 +1,7 @@
 # server.py
 import socket
 import threading
+import rsa
 
 HOST = '0.0.0.0'  # 全てのインターフェースで待ち受け
 PORT = 12345      # 使用するポート番号

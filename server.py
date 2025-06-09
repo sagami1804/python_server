@@ -1,10 +1,24 @@
 # server.py
 import socket
 import threading
-import rsa
+from rsa import *
 
 HOST = '0.0.0.0'  # 全てのインターフェースで待ち受け
 PORT = 12345      # 使用するポート番号
+
+# 秘密鍵
+P = 997
+Q = 859
+
+N = P * Q
+PHI = (P - 1) * (Q - 1)
+E = 65537
+D = modinv(E, PHI)
+
+# 秘密鍵(RSA-CRTで拡張したもの)
+DP = D % (P - 1)
+DQ = D % (Q - 1)
+QINV = modinv(Q, P)
 
 def handle_client(conn, addr):
     print(f"{addr} と接続されました")
@@ -24,6 +38,7 @@ def handle_client(conn, addr):
 
 def decryption(code):
     text = ""
+    text = decRsaCRT(code,N,P,Q,DP,DQ,QINV)
     return text
     
     

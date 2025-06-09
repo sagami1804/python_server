@@ -1,16 +1,23 @@
 # client.py
 import socket
-import rsa
+from rsa import *
 
 SERVER_IP = '10.0.3.85'
 PORT = 12345
+# 秘密鍵
+P = 997
+Q = 859
+N = P * Q
+E = 65537
 
 def encryption(text):
     code = ""
+    code = encRsaCrt(int(text),N,E)
     return code
 
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        
         s.connect((SERVER_IP, PORT))
         print("接続しました。メッセージを送信してください")
         

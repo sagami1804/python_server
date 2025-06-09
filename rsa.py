@@ -108,10 +108,10 @@ def xgcd(a, b):
 # モジュラ逆数
 def modinv(q, p):
     g, x, y = xgcd(q, p)
-    # if g != 1:
-        
-    # else:
-    return x % p
+    if g != 1:
+        raise Exception('modular inverse does not exist')
+    else:
+        return x % p
 
 if __name__ == "__main__":
 

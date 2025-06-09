@@ -1,5 +1,6 @@
 # client.py
 import socket
+import rsa
 
 SERVER_IP = '10.0.3.85'
 PORT = 12345

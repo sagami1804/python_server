@@ -23,13 +23,13 @@ def main():
         
         while True:
             msg = input("送信文字列（終了するには空Enter）: ")
-            msg = encryption(msg)
-            print("暗号:"+msg)
-            if msg == "":
+            msg = encryption(int(msg))
+            print("暗号:"+str(msg))
+            if str(msg) == "":
                 break
-            if msg == "exit":
+            if str(msg) == "exit":
                 break
-            s.sendall(msg.encode())
+            s.sendall(str(msg).encode())
             data = s.recv(1024)
             print("サーバーからの返信:", data.decode())
         

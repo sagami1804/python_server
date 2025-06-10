@@ -6,9 +6,9 @@ from rsa import *
 HOST = '0.0.0.0'  # 全てのインターフェースで待ち受け
 PORT = 12345      # 使用するポート番号
 
-# 秘密鍵
-P = 997
-Q = 859
+# pとqの素数を生成
+P = getPrime(8)
+Q = getPrime(8)
 
 N = P * Q
 PHI = (P - 1) * (Q - 1)
@@ -23,6 +23,11 @@ QINV = modinv(Q, P)
 # クライアントとの通信
 def handle_client(conn, addr):
     print(f"{addr} と接続されました")
+    
+    # 公開鍵を送信
+    public_key = f"{N},{E}"
+    conn.sendall(public_key.encode())
+    
     with conn:
         while True:
             # データ受信
@@ -54,7 +59,6 @@ def handle_client(conn, addr):
 
 # 復号
 def decryption(code):
-    text = ""
     text = decRsaCRT(code,N,P,Q,DP,DQ,QINV)
     return text
     

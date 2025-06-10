@@ -2,18 +2,12 @@
 import socket
 from rsa import *
 
-SERVER_IP = '10.0.3.85'
+SERVER_IP = '10.0.70.204'
 PORT = 12345
 
-# 秘密鍵
-P = 997
-Q = 859
-N = P * Q
-E = 65537
-
 # 暗号化
-def encryption(text):
-    code = encRsaCrt(text,N,E)
+def encryption(text,n,e):
+    code = encRsaCrt(text,n,e)
     return code
 
 def main():
@@ -21,6 +15,14 @@ def main():
         
         # サーバーに接続
         s.connect((SERVER_IP, PORT))
+        
+        # 公開鍵を受信
+        key_data = s.recv(1024)
+        keys = key_data.decode().split(",")
+        n = int(keys[0])
+        e = int(keys[1])
+        
+        print(f"n = {n}, e = {e}")
         print("接続しました。メッセージを送信してください")
         
         while True:
@@ -38,9 +40,9 @@ def main():
             # 4桁ずつ暗号化
             for numbers in msg:
                 if count == 3:
-                    enc_msg = enc_msg + str(encryption(int(numbers)))
+                    enc_msg = enc_msg + str(encryption(int(numbers),n,e))
                 else:
-                    enc_msg = enc_msg + str(encryption(int(numbers))) + '-'
+                    enc_msg = enc_msg + str(encryption(int(numbers),n,e)) + '-'
                 count = count + 1
 
             print("暗号:"+str(enc_msg))

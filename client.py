@@ -2,7 +2,7 @@
 import socket
 from rsa import *
 
-SERVER_IP = '172.23.25.106'
+SERVER_IP = '192.168.1.20'
 PORT = 12345
 
 # 暗号化

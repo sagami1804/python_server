@@ -1,24 +1,24 @@
 # server.py
 import socket
 import threading
+import time
 from rsa import *
 
 HOST = '0.0.0.0'  # 全てのインターフェースで待ち受け
 PORT = 12345      # 使用するポート番号
 
 # pとqの素数を生成
-P = getPrime(8)
-Q = getPrime(8)
+P = getPrime(512)
+Q = getPrime(512)
 
 N = P * Q
 PHI = (P - 1) * (Q - 1)
 E = 65537
-D = modinv(E, PHI)
+D = pow(E, -1, PHI)
 
 # 秘密鍵(RSA-CRTで拡張したもの)
 DP = D % (P - 1)
 DQ = D % (Q - 1)
-QINV = modinv(Q, P)
 
 # クライアントとの通信
 def handle_client(conn, addr):
@@ -39,16 +39,16 @@ def handle_client(conn, addr):
             data = data.decode()
             print(f"{addr} から受信(暗号): {data}")
             
-            # ハイフンで4分割
-            data_list = data.split('-')
-            dec_data = ''
+            start = time.perf_counter() #計測開始
+            dec_data = str(decryption(int(data)))
+            end = time.perf_counter() #計測終了
+            print(f"復号にかかった時間: {end - start:.6f}秒")
+            print(f"{addr} から受信(平文): {dec_data}\n")
             
-            # 4桁ずつ復号
-            for i in range(4):
-                if i == 3:
-                    dec_data = dec_data + str(decryption(int(data_list[i])))
-                else:
-                    dec_data = dec_data + str(decryption(int(data_list[i]))) + '-'
+            start = time.perf_counter() #計測開始
+            dec_data = str(decRsa(int(data), N, D))
+            end = time.perf_counter() #計測終了
+            print(f"復号にかかった時間(通常のRSA): {end - start:.6f}秒")
             print(f"{addr} から受信(平文): {dec_data}\n")
             
             # 復号結果をクライアントに送信
@@ -59,7 +59,7 @@ def handle_client(conn, addr):
 
 # 復号
 def decryption(code):
-    text = decRsaCRT(code,N,P,Q,DP,DQ,QINV)
+    text = decRsaCrt(code, N, D, P, Q)
     return text
     
     

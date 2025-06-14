@@ -80,66 +80,63 @@ numberToChar = {
     36: '9'
 }
 
-# 暗号化(RSA)
+# 暗号化(共通)
 def encRsaCrt(plane, n, e):
-    encryptText = (plane ** e) % n
+    encryptText = pow(plane, e, n)
     return encryptText
 
+# 復号(RSA)
+def decRsa(encryptText, n, d):
+    decryptText = pow(encryptText, d, n)
+    return decryptText
+
 # 復号(RSA-CRT)
-def decRsaCRT(encryptText, n, p, q, dp, dq, qinv):
-    mp = (encryptText ** dp) % p
-    mq = (encryptText ** dq) % q
-    decryptText = calcCrt(mp, mq, q, qinv) % n
+def decRsaCrt(encryptText, n, d, p, q):
+    # 秘密鍵(RSA-CRTで拡張したもの)
+    dp = d % (p - 1)
+    dq = d % (q - 1)
+    qinv = pow(q, -1, p)
+
+    # 暗号文を分ける
+    mp = pow(encryptText, dp, p)
+    mq = pow(encryptText, dq, q) 
+
+    # 中国剰余定理を使用してそれぞれ復号した文を元の復号した文に戻す
+    decryptText = calcCrt(mp, mq, n, p, q, qinv)
     return decryptText
 
 # 中国剰余定理（CRT）
-def calcCrt(mp, mq, q, qinv):
-    crt = mq + (mp - mq) * qinv * q
+def calcCrt(mp, mq, n, p, q, qinv):
+    t = (qinv * (mp - mq)) % p
+    crt = (mq + q * t) % n
     return crt
-
-# 拡張ユークリッドの互除法
-def xgcd(a, b):
-    x0, y0, x1, y1 = 1, 0, 0, 1
-    while b != 0:
-        q, a, b = a // b, b, a % b
-        x0, x1 = x1, x0 - q * x1
-        y0, y1 = y1, y0 - q * y1
-    return a, x0, y0
-
-# モジュラ逆数
-def modinv(q, p):
-    g, x, y = xgcd(q, p)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % p
 
 if __name__ == "__main__":
 
     # 秘密鍵
-    p = getPrime(8)
-    q = getPrime(8)
+    p = getPrime(512)
+    q = getPrime(512)
 
+    # 公開鍵
     n = p * q
     phi = (p - 1) * (q - 1)
     e = 65537
-    d = modinv(e, phi)
 
-    # 秘密鍵(RSA-CRTで拡張したもの)
-    dp = d % (p - 1)
-    dq = d % (q - 1)
-    qinv = modinv(q, p)
+    # 秘密鍵
+    d = pow(e, -1, phi)
     
-    # 平文（4桁の数値）
-    m = 9999
+    # 平文（数値）
+    m = 1234567890123456
     print("平文：" + str(m))
 
     # 暗号化
     c = encRsaCrt(m, n, e)
-
     print("暗号文：" + str(c))
 
-    # 復号
-    m = decRsaCRT(c, n, p, q, dp, dq, qinv) 
+    # 復号(通常のRSA)
+    mRsa = decRsa(c, n, d) 
+    print("復号した文（通常のRSA）：" + str(m))
 
-    print("復号した文：" + str(m))
+    # 復号(CRT)
+    mCrt = decRsaCrt(c, n, d, p, q) 
+    print("復号した文（CRT）　　　：" + str(m))

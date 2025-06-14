@@ -2,7 +2,7 @@
 import socket
 from rsa import *
 
-SERVER_IP = '10.0.70.204'
+SERVER_IP = '192.168.1.20'
 PORT = 12345
 
 # 暗号化
@@ -32,20 +32,8 @@ def main():
             if str(msg) == "":
                 break
 
-            # 入力した文字列をハイフンで4分割
-            msg = msg.split('-')
-            enc_msg = ''
-            count = 0
-            
-            # 4桁ずつ暗号化
-            for numbers in msg:
-                if count == 3:
-                    enc_msg = enc_msg + str(encryption(int(numbers),n,e))
-                else:
-                    enc_msg = enc_msg + str(encryption(int(numbers),n,e)) + '-'
-                count = count + 1
-
-            print("暗号:"+str(enc_msg))
+            enc_msg = str(encryption(int(msg),n,e))
+            print("暗号:"+enc_msg)
             
             # サーバーに送信
             s.sendall(enc_msg.encode())

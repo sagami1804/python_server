@@ -37,12 +37,12 @@ def handle_client(conn, addr):
             if not data:
                 break
             data = data.decode()
-            print(f"{addr} から受信(暗号): {data}")
+            print(f"\n{addr} から受信(暗号): {data}\n")
             
             start = time.perf_counter() #計測開始
             dec_data = str(decryption(int(data)))
             end = time.perf_counter() #計測終了
-            print(f"復号にかかった時間: {end - start:.6f}秒")
+            print(f"復号にかかった時間(CRT)　　　: {end - start:.6f}秒")
             print(f"{addr} から受信(平文): {dec_data}\n")
             
             start = time.perf_counter() #計測開始
@@ -52,7 +52,8 @@ def handle_client(conn, addr):
             print(f"{addr} から受信(平文): {dec_data}\n")
             
             # 復号結果をクライアントに送信
-            response = "受信しました: " + dec_data
+            dec_data_add_hyphen = f"{dec_data[:4]}-{dec_data[4:8]}-{dec_data[8:12]}-{dec_data[12:]}"
+            response = "受信しました: " + dec_data_add_hyphen
             conn.sendall(response.encode())
             
     print(f"{addr} との接続を終了しました")

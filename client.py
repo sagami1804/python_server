@@ -22,7 +22,7 @@ def main():
         n = int(keys[0])
         e = int(keys[1])
         
-        print(f"n = {n}, e = {e}")
+        print(f"n = {n}, e = {e}\n")
         print("接続しました。メッセージを送信してください")
         
         while True:
@@ -32,15 +32,15 @@ def main():
             if str(msg) == "":
                 break
 
-            enc_msg = str(encryption(int(msg),n,e))
-            print("暗号:"+enc_msg)
+            enc_msg = str(encryption(int(msg.replace('-', '')),n,e))
+            print("\n暗号:"+enc_msg+"\n")
             
             # サーバーに送信
             s.sendall(enc_msg.encode())
             
             # サーバーから受信(デバッグ)
             data = s.recv(1024)
-            print("サーバーからの返信:", data.decode(),"\n")
+            print("\nサーバーからの返信:", data.decode(),"\n")
         
         
 if __name__ == "__main__":
